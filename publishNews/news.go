@@ -807,6 +807,8 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return t.createAccounts(stub, args)
 	} else if function == "createAccount" {
 		return t.createAccount(stub, args)
+	} else if function == "createSite" {
+		return t.createSite(stub, args)
 	}
 
 	return nil, errors.New("Received unknown function invocation: " + function)
