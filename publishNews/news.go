@@ -180,7 +180,7 @@ func (t *SimpleChaincode) createSite(stub shim.ChaincodeStubInterface, args []st
 
 	fmt.Println("Attempting to get state of any existing site for " + site.SiteId)
 	existingBytes, err := stub.GetState(sitePrefix + site.SiteId)
-	if err == nil {
+	if err == nil { //site exists
 
 		var existingSite Site
 		err = json.Unmarshal(existingBytes, &existingSite)
@@ -203,11 +203,11 @@ func (t *SimpleChaincode) createSite(stub shim.ChaincodeStubInterface, args []st
 			}
 		} else {
 			fmt.Println("Site already exists for " + site.SiteId + " " + site.SiteName)
-			return nil, errors.New("Can't reinitialize existing user " + site.SiteId)
+			return nil, errors.New("Can't reinitialize existing site " + site.SiteId)
 		}
 	} else {
 
-		fmt.Println("No existing account found for " + site.SiteId + ", initializing account.")
+		fmt.Println("No existing site found for " + site.SiteId + ", initializing site.")
 		err = stub.PutState(sitePrefix + site.SiteId, siteBytes)
 
 		if err == nil {
