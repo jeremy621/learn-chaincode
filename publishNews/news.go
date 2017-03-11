@@ -553,6 +553,23 @@ func GetCompany(companyID string, stub shim.ChaincodeStubInterface) (Account, er
 	return company, nil
 }
 
+func GetSite(siteId string, stub shim.ChaincodeStubInterface) (Site, error) {
+	var site Site
+	siteBytes, err := stub.GetState(sitePrefix + siteId)
+	if err != nil {
+		fmt.Println("Site not found " + siteId)
+		return site, errors.New("Site not found " + siteId)
+	}
+
+	err = json.Unmarshal(siteBytes, &site)
+	if err != nil {
+		fmt.Println("Error unmarshalling site " + siteId + "\n err:" + err.Error())
+		return site, errors.New("Error unmarshalling site " + siteId)
+	}
+
+	return site, nil
+}
+
 
 // Still working on this one
 func (t *SimpleChaincode) transferPaper(stub shim.ChaincodeStubInterface, args []string) ([]byte, error) {
@@ -781,6 +798,21 @@ func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function strin
 			}
 			fmt.Println("All success, returning the company")
 			return companyBytes, nil
+		}
+	} else if function == "GetSite" {
+		fmt.Println("Getting the site")
+		site, err := GetSite(args[0], stub)
+		if err != nil {
+			fmt.Println("Error from getSite")
+			return nil, err
+		} else {
+			siteBytes, err1 := json.Marshal(&site)
+			if err1 != nil {
+				fmt.Println("Error marshalling the site")
+				return nil, err1
+			}
+			fmt.Println("All success, returning the site")
+			return siteBytes, nil
 		}
 	} else {
 		fmt.Println("Generic Query call")
